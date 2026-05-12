@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Калькулятор окупаемости SEO</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:       #1c1917;
+    --ink-mid:   #44403c;
+    --ink-soft:  #78716c;
+    --ink-faint: #a8a29e;
+    --cream:     #faf8f5;
+    --paper:     #f5f0e8;
+    --card:      #ffffff;
+    --gold:      #a87c3e;
+    --gold-lt:   #e8d5b4;
+    --green:     #2d6a4f;
+    --red:       #9b2226;
+    --border:    #e7e2d9;
+    --radius:    12px;
+  }
+
+  body {
+    font-family: 'PT Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* ── Header ── */
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-tag {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-family: 'PT Sans', sans-serif;
+    margin-bottom: 14px;
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.25;
+    margin-bottom: 12px;
+  }
+  .header p {
+    font-size: 15px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  /* ── Investment summary bar ── */
+  .invest-bar {
+    background: var(--ink);
+    border-radius: var(--radius);
+    padding: 20px 28px;
+    margin-bottom: 32px;
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+  }
+  .invest-item {
+    flex: 1;
+    text-align: center;
+    padding: 4px 12px;
+    border-right: 1px solid rgba(255,255,255,0.12);
+  }
+  .invest-item:last-child { border-right: none; }
+  .invest-item .val {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: #fff;
+    font-weight: 500;
+  }
+  .invest-item .lbl {
+    font-size: 11px;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .invest-item .sub {
+    font-size: 12px;
+    color: var(--gold-lt);
+    margin-top: 3px;
+  }
+
+  /* ── Section label ── */
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 10px;
+  }
+
+  /* ── CLV explainer ── */
+  .clv-explainer {
+    background: var(--paper);
+    border: 1px solid var(--gold-lt);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 32px;
+    position: relative;
+  }
+  .clv-explainer::before {
+    content: 'CLV';
+    position: absolute;
+    top: -13px;
+    left: 24px;
+    background: var(--gold);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-family: 'PT Sans', sans-serif;
+  }
+  .clv-explainer h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: var(--ink);
+  }
+  .clv-explainer p {
+    font-size: 14px;
+    color: var(--ink-mid);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+  .clv-explainer p:last-child { margin-bottom: 0; }
+  .clv-example {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 13px;
+    color: var(--ink-mid);
+    line-height: 1.65;
+  }
+  .clv-example strong { color: var(--gold); }
+
+  /* ── Sliders ── */
+  .sliders { margin-bottom: 32px; display: flex; flex-direction: column; gap: 20px; }
+
+  .slider-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px 20px;
+  }
+  .slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 6px;
+  }
+  .slider-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .slider-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--gold);
+    white-space: nowrap;
+    margin-left: 16px;
+    margin-top: -2px;
+  }
+  .slider-desc {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+  .slider-desc em {
+    font-style: normal;
+    color: var(--ink-mid);
+    font-weight: 700;
+  }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 3px solid var(--card);
+    box-shadow: 0 0 0 1.5px var(--gold);
+    cursor: pointer;
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 3px solid var(--card);
+    cursor: pointer;
+  }
+  .slider-ticks {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-top: 6px;
+  }
+
+  /* ── Metric cards ── */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .metric {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+  .metric.accent {
+    background: var(--ink);
+  }
+  .metric-label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+  .metric.accent .metric-label { color: rgba(255,255,255,0.4); }
+  .metric-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .metric.accent .metric-value { color: #fff; }
+  .metric-sub {
+    font-size: 12px;
+    color: var(--ink-faint);
+    line-height: 1.4;
+  }
+  .metric.accent .metric-sub { color: rgba(255,255,255,0.35); }
+  .metric-value.positive { color: var(--green); }
+  .metric-value.negative { color: var(--red); }
+
+  /* ── Progress / threshold ── */
+  .threshold-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    margin-bottom: 12px;
+  }
+  .threshold-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 14px;
+  }
+  .threshold-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .threshold-verdict {
+    font-size: 13px;
+    font-weight: 700;
+    transition: color 0.2s;
+  }
+  .threshold-verdict.pos { color: var(--green); }
+  .threshold-verdict.neg { color: var(--red); }
+
+  .progress-wrap {
+    position: relative;
+    height: 10px;
+    background: var(--paper);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.25s, background 0.25s;
+  }
+  .threshold-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-top: 4px;
+  }
+  .threshold-row span.hi { color: var(--ink-mid); font-weight: 700; }
+
+  .threshold-desc {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── Footer ── */
+  .footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--ink-faint);
+    line-height: 1.7;
+    text-align: center;
+  }
+
+  @media (max-width: 520px) {
+    .header h1 { font-size: 24px; }
+    .metrics { grid-template-columns: 1fr; }
+    .invest-bar { flex-direction: column; gap: 12px; }
+    .invest-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.12); padding: 6px 0; }
+    .invest-item:last-child { border-bottom: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <header class="header">
+    <span class="header-tag">SEO · Инструмент для клиента</span>
+    <h1>Калькулятор окупаемости<br>SEO-инвестиций</h1>
+    <p>Введите два параметра — и вы увидите, сколько новых клиентов нужно, чтобы SEO себя окупило, и какую прибыль вы получите по итогам первого года.</p>
+  </header>
+
+  <!-- Investment breakdown -->
+  <div class="invest-bar">
+    <div class="invest-item">
+      <div class="val">€600</div>
+      <div class="lbl">Месяцы 1–2</div>
+      <div class="sub">Аудит и настройка</div>
+    </div>
+    <div class="invest-item">
+      <div class="val">€900</div>
+      <div class="lbl">Месяцы 3–12</div>
+      <div class="sub">Активное продвижение</div>
+    </div>
+    <div class="invest-item">
+      <div class="val">€10 200</div>
+      <div class="lbl">Итого за год</div>
+      <div class="sub">Суммарные инвестиции</div>
+    </div>
+  </div>
+
+  <!-- CLV Explainer -->
+  <div class="clv-explainer">
+    <h3>Что такое CLV (Пожизненная ценность клиента)?</h3>
+    <p>
+      <strong>CLV — Customer Lifetime Value</strong> — это сумма денег, которую один клиент приносит вашему бизнесу за определённый период. В данном калькуляторе мы используем <strong>годовой CLV</strong>: сколько в среднем тратит один клиент за 12 месяцев.
+    </p>
+    <p>
+      CLV учитывает не только первую покупку, но и повторные заказы. Чем выше лояльность клиента — тем выше его CLV.
+    </p>
+    <div class="clv-example">
+      <strong>Пример:</strong> Клиент покупает итальянские сапоги за €180 и возвращается за сумкой за €120. Его годовой CLV = <strong>€300</strong>. Если SEO привлечёт 50 таких клиентов — это €15 000 дохода за год.
+    </div>
+  </div>
+
+  <!-- Sliders -->
+  <div class="sliders">
+
+    <div class="slider-card">
+      <div class="slider-header">
+        <div class="slider-title">CLV — годовая ценность клиента</div>
+        <div class="slider-value" id="clvLabel">€500</div>
+      </div>
+      <p class="slider-desc">
+        Средняя сумма, которую один клиент тратит у вас <em>за год</em>. Если не знаете точную цифру — возьмите средний чек и умножьте на среднее число покупок в год. Для бутика premium-класса типичный диапазон: <em>€200–€600</em>.
+      </p>
+      <input type="range" min="0" max="2000" step="1" value="500" id="clvRange">
+      <div class="slider-ticks"><span>€0</span><span>€500</span><span>€1 000</span><span>€1 500</span><span>€2 000</span></div>
+    </div>
+
+    <div class="slider-card">
+      <div class="slider-header">
+        <div class="slider-title">Новые клиенты за год — целевой KPI</div>
+        <div class="slider-value" id="custLabel">200</div>
+      </div>
+      <p class="slider-desc">
+        Сколько <em>новых клиентов</em> вы планируете привлечь через органический поиск Google за первые 12 месяцев SEO-работ. Это ваш ключевой показатель эффективности (KPI). Мы не моделируем помесячный прирост — только итог года, потому что реальный темп зависит от конкуренции и исходного состояния сайта.
+      </p>
+      <input type="range" min="1" max="600" step="1" value="200" id="custRange">
+      <div class="slider-ticks"><span>1</span><span>150</span><span>300</span><span>450</span><span>600</span></div>
+    </div>
+
+  </div>
+
+  <!-- Metric cards -->
+  <div class="metrics">
+    <div class="metric accent">
+      <div class="metric-label">Суммарные инвестиции в SEO</div>
+      <div class="metric-value">€10 200</div>
+      <div class="metric-sub">€600 × 2 мес + €900 × 10 мес</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Прогнозируемый доход за год</div>
+      <div class="metric-value" id="returnVal">—</div>
+      <div class="metric-sub" id="returnFormula">—</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Чистая прибыль / убыток</div>
+      <div class="metric-value" id="netVal">—</div>
+      <div class="metric-sub" id="roiVal">—</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Минимум клиентов для окупаемости</div>
+      <div class="metric-value" id="beVal">—</div>
+      <div class="metric-sub" id="beSub">клиентов достаточно, чтобы выйти в ноль</div>
+    </div>
+  </div>
+
+  <!-- Threshold bar -->
+  <div class="threshold-card">
+    <div class="threshold-header">
+      <span class="threshold-title">Ваша цель относительно порога безубыточности</span>
+      <span class="threshold-verdict" id="verdict">—</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <div class="threshold-row">
+      <span>0</span>
+      <span>Порог: <span class="hi" id="beMarker">—</span></span>
+      <span id="maxMarker">600</span>
+    </div>
+    <p class="threshold-desc" id="thresholdDesc">—</p>
+  </div>
+
+  <footer class="footer">
+    Калькулятор основан на реальной структуре инвестиций: €600/мес в первые 2 месяца (технический аудит и настройка) и €900/мес в месяцы 3–12 (активное SEO-продвижение). Итоговые данные — прогнозные и зависят от конкурентности ниши, исходного состояния сайта и качества контента. Помесячный прирост клиентов не моделируется — расчёт ведётся по итогу года.
+  </footer>
+
+</div>
+<script>
+  const investment = 10200;
+
+  function fmt(n) {
+    return '€\u202F' + Math.round(Math.abs(n)).toLocaleString('ru-RU');
+  }
+
+  function update() {
+    const clv  = parseInt(document.getElementById('clvRange').value);
+    const cust = parseInt(document.getElementById('custRange').value);
+
+    document.getElementById('clvLabel').textContent  = '€' + clv;
+    document.getElementById('custLabel').textContent = cust;
+
+    const totalReturn = cust * clv;
+    const net         = totalReturn - investment;
+    const roi         = (totalReturn / investment).toFixed(1);
+    const beThreshold = Math.ceil(investment / clv);
+    const isPos       = net >= 0;
+    const surplus     = cust - beThreshold;
+
+    document.getElementById('returnVal').textContent     = fmt(totalReturn);
+    document.getElementById('returnFormula').textContent = cust + ' клиентов × €' + clv + ' CLV';
+
+    const netEl = document.getElementById('netVal');
+    netEl.textContent = (net >= 0 ? '+' : '−') + fmt(net);
+    netEl.className   = 'metric-value ' + (isPos ? 'positive' : 'negative');
+
+    document.getElementById('roiVal').textContent = 'Коэффициент ROI: ' + roi + '×';
+
+    document.getElementById('beVal').textContent = beThreshold;
+
+    const maxCust = parseInt(document.getElementById('custRange').max);
+    const pct     = Math.min(cust / maxCust * 100, 100);
+    const fill    = document.getElementById('progressFill');
+    fill.style.width      = pct + '%';
+    fill.style.background = isPos ? '#2d6a4f' : '#9b2226';
+
+    document.getElementById('beMarker').textContent   = beThreshold + ' кл.';
+    document.getElementById('maxMarker').textContent  = maxCust;
+
+    const verdict = document.getElementById('verdict');
+    if (isPos) {
+      verdict.textContent  = '✓ Цель превышает порог на ' + surplus + ' кл.';
+      verdict.className    = 'threshold-verdict pos';
+    } else {
+      verdict.textContent  = '✗ До окупаемости не хватает ' + Math.abs(surplus) + ' кл.';
+      verdict.className    = 'threshold-verdict neg';
+    }
+
+    const descEl = document.getElementById('thresholdDesc');
+    if (isPos) {
+      descEl.textContent =
+        'При вашей цели в ' + cust + ' клиентов и CLV €' + clv +
+        ' SEO принесёт €' + Math.round(totalReturn).toLocaleString('ru-RU') +
+        ' дохода против €10 200 инвестиций. Чистая прибыль составит ' +
+        fmt(net) + ' — это ROI ' + roi + '×. ' +
+        'Для окупаемости достаточно всего ' + beThreshold + ' клиентов — ваша цель превышает этот порог на ' + surplus + '.';
+    } else {
+      descEl.textContent =
+        'При вашей цели в ' + cust + ' клиентов и CLV €' + clv +
+        ' доход составит ' + fmt(totalReturn) + ', что не покрывает инвестиции €10 200. ' +
+        'Для выхода в ноль нужно ещё ' + Math.abs(surplus) + ' клиентов (итого ' + beThreshold + '). ' +
+        'Попробуйте увеличить цель по клиентам или проверьте расчёт CLV — возможно, он занижен.';
+    }
+  }
+
+  document.getElementById('clvRange').addEventListener('input', update);
+  document.getElementById('custRange').addEventListener('input', update);
+  update();
+</script>
+</body>
+</html>
