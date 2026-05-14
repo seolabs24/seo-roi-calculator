@@ -353,12 +353,118 @@
     text-align: center;
   }
 
+  /* ── KPI slider ── */
+  .slider-card.kpi {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+  .slider-card.kpi .slider-title { color: #fff; }
+  .slider-card.kpi .slider-value { color: #f0c97a; }
+  .slider-card.kpi .slider-desc  { color: rgba(255,255,255,0.55); }
+  .slider-card.kpi .slider-desc em { color: rgba(255,255,255,0.85); }
+  .slider-card.kpi .slider-ticks { color: rgba(255,255,255,0.3); }
+  .slider-card.kpi input[type=range] { background: rgba(255,255,255,0.15); }
+  .slider-card.kpi input[type=range]::-webkit-slider-thumb {
+    background: #f0c97a;
+    border-color: var(--ink);
+    box-shadow: 0 0 0 1.5px #f0c97a;
+  }
+  .slider-card.kpi input[type=range]::-moz-range-thumb {
+    background: #f0c97a;
+    border-color: var(--ink);
+  }
+  .kpi-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: #f0c97a;
+    color: var(--ink);
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-left: 10px;
+    vertical-align: middle;
+    font-family: 'PT Sans', sans-serif;
+  }
+
+  /* ── Funnel section ── */
+  .funnel-section {
+    margin-bottom: 28px;
+  }
+  .funnel-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .funnel-subtitle {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+    line-height: 1.6;
+  }
+  .funnel-chain {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .funnel-step {
+    flex: 1;
+    padding: 18px 16px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+  .funnel-step:last-child { border-right: none; }
+  .funnel-step-label {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 6px;
+  }
+  .funnel-step-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .funnel-step-sub {
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-top: 4px;
+  }
+  .funnel-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px;
+    font-size: 18px;
+    color: var(--gold);
+    flex-shrink: 0;
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .metric-value.positive { color: var(--green); }
+  .metric-value.negative { color: var(--red); }
+
   @media (max-width: 520px) {
     .header h1 { font-size: 24px; }
     .metrics { grid-template-columns: 1fr; }
     .invest-bar { flex-direction: column; gap: 12px; }
     .invest-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.12); padding: 6px 0; }
     .invest-item:last-child { border-bottom: none; }
+    .funnel-chain { flex-direction: column; }
+    .funnel-step { border-right: none; border-bottom: 1px solid var(--border); }
+    .funnel-step:last-child { border-bottom: none; }
+    .funnel-arrow { display: none; }
   }
 </style>
 </head>
@@ -369,7 +475,7 @@
   <header class="header">
     <span class="header-tag">SEO · Инструмент для клиента</span>
     <h1>Калькулятор окупаемости<br>SEO-инвестиций</h1>
-    <p>Введите два параметра — и вы увидите, сколько новых клиентов нужно, чтобы SEO себя окупило, и какую прибыль вы получите по итогам первого года.</p>
+    <p>Введите четыре параметра — и вы увидите полную воронку: сколько показов и кликов нужно Google, чтобы получить нужное число клиентов, окупить SEO и выйти в прибыль.</p>
   </header>
 
   <!-- Investment breakdown -->
@@ -422,16 +528,71 @@
 
     <div class="slider-card">
       <div class="slider-header">
-        <div class="slider-title">Новые клиенты за год — целевой KPI</div>
+        <div class="slider-title">CR — конверсия сайта</div>
+        <div class="slider-value" id="crLabel">2.0%</div>
+      </div>
+      <p class="slider-desc">
+        <em>CR (Conversion Rate)</em> — процент посетителей сайта, которые совершают покупку. Формула: <em>Покупки ÷ Клики × 100%</em>. Средний CR для интернет-магазина одежды — <em>1–3%</em>. Для premium-бутика с узкой аудиторией может быть выше.
+      </p>
+      <input type="range" min="0.1" max="15" step="0.1" value="2" id="crRange">
+      <div class="slider-ticks"><span>0.1%</span><span>3.75%</span><span>7.5%</span><span>11.25%</span><span>15%</span></div>
+    </div>
+
+    <div class="slider-card">
+      <div class="slider-header">
+        <div class="slider-title">CTR — кликабельность в поиске</div>
+        <div class="slider-value" id="ctrLabel">5.0%</div>
+      </div>
+      <p class="slider-desc">
+        <em>CTR (Click-Through Rate)</em> — процент людей, которые увидели ваш сайт в результатах Google и кликнули на него. Формула: <em>Клики ÷ Показы × 100%</em>. Позиция №1 в Google даёт CTR около <em>25–30%</em>, позиция №5 — около <em>5–7%</em>, позиция №10 — около <em>2–3%</em>.
+      </p>
+      <input type="range" min="0.1" max="30" step="0.1" value="5" id="ctrRange">
+      <div class="slider-ticks"><span>0.1%</span><span>7.5%</span><span>15%</span><span>22.5%</span><span>30%</span></div>
+    </div>
+
+    <div class="slider-card kpi">
+      <div class="slider-header">
+        <div class="slider-title">Новые клиенты за год <span class="kpi-badge">KPI</span></div>
         <div class="slider-value" id="custLabel">200</div>
       </div>
       <p class="slider-desc">
-        Сколько <em>новых клиентов</em> вы планируете привлечь через органический поиск Google за первые 12 месяцев SEO-работ. Это ваш ключевой показатель эффективности (KPI). Мы не моделируем помесячный прирост — только итог года, потому что реальный темп зависит от конкуренции и исходного состояния сайта.
+        Сколько <em>новых клиентов</em> вы планируете привлечь через органический поиск Google за первые 12 месяцев SEO-работ. Это ваш главный ключевой показатель эффективности. Мы не моделируем помесячный прирост — только итог года, потому что реальный темп зависит от конкуренции и исходного состояния сайта.
       </p>
       <input type="range" min="1" max="600" step="1" value="200" id="custRange">
       <div class="slider-ticks"><span>1</span><span>150</span><span>300</span><span>450</span><span>600</span></div>
     </div>
 
+  </div>
+
+  <!-- Funnel chain -->
+  <div class="funnel-section">
+    <p class="funnel-title">Воронка органического трафика</p>
+    <p class="funnel-subtitle">Сколько показов и кликов необходимо, чтобы достичь вашей цели по клиентам. Расчёт строится снизу вверх: от нужного результата к требуемому трафику.</p>
+    <div class="funnel-chain">
+      <div class="funnel-step">
+        <div class="funnel-step-label">Показы в Google</div>
+        <div class="funnel-step-value" id="funnelImpressions">—</div>
+        <div class="funnel-step-sub" id="funnelImpSub">за год</div>
+      </div>
+      <div class="funnel-arrow">→</div>
+      <div class="funnel-step">
+        <div class="funnel-step-label">Клики на сайт</div>
+        <div class="funnel-step-value" id="funnelClicks">—</div>
+        <div class="funnel-step-sub" id="funnelClkSub">CTR <span id="funnelCtrPct">—</span></div>
+      </div>
+      <div class="funnel-arrow">→</div>
+      <div class="funnel-step">
+        <div class="funnel-step-label">Покупатели</div>
+        <div class="funnel-step-value" id="funnelCust">—</div>
+        <div class="funnel-step-sub" id="funnelCrSub">CR <span id="funnelCrPct">—</span></div>
+      </div>
+      <div class="funnel-arrow">→</div>
+      <div class="funnel-step">
+        <div class="funnel-step-label">Доход за год</div>
+        <div class="funnel-step-value" id="funnelRevenue">—</div>
+        <div class="funnel-step-sub">CLV <span id="funnelClvAmt">—</span></div>
+      </div>
+    </div>
   </div>
 
   <!-- Metric cards -->
@@ -486,20 +647,40 @@
   function fmt(n) {
     return '€\u202F' + Math.round(Math.abs(n)).toLocaleString('ru-RU');
   }
+  function fmtNum(n) {
+    return Math.round(n).toLocaleString('ru-RU');
+  }
 
   function update() {
     const clv  = parseInt(document.getElementById('clvRange').value);
     const cust = parseInt(document.getElementById('custRange').value);
+    const cr   = parseFloat(document.getElementById('crRange').value);
+    const ctr  = parseFloat(document.getElementById('ctrRange').value);
 
     document.getElementById('clvLabel').textContent  = '€' + clv;
     document.getElementById('custLabel').textContent = cust;
+    document.getElementById('crLabel').textContent   = cr.toFixed(1) + '%';
+    document.getElementById('ctrLabel').textContent  = ctr.toFixed(1) + '%';
+
+    // Funnel back-calculation
+    const clicksNeeded      = cr > 0 ? cust / (cr / 100) : 0;
+    const impressionsNeeded = ctr > 0 ? clicksNeeded / (ctr / 100) : 0;
+
+    document.getElementById('funnelImpressions').textContent = fmtNum(impressionsNeeded);
+    document.getElementById('funnelClicks').textContent      = fmtNum(clicksNeeded);
+    document.getElementById('funnelCust').textContent        = fmtNum(cust);
+    document.getElementById('funnelCtrPct').textContent      = ctr.toFixed(1) + '%';
+    document.getElementById('funnelCrPct').textContent       = cr.toFixed(1) + '%';
+    document.getElementById('funnelClvAmt').textContent      = '€' + clv;
 
     const totalReturn = cust * clv;
+    document.getElementById('funnelRevenue').textContent = fmt(totalReturn);
+
     const net         = totalReturn - investment;
-    const roi         = (totalReturn / investment).toFixed(1);
-    const beThreshold = Math.ceil(investment / clv);
+    const roi         = investment > 0 ? (totalReturn / investment).toFixed(1) : '0';
+    const beThreshold = clv > 0 ? Math.ceil(investment / clv) : '—';
     const isPos       = net >= 0;
-    const surplus     = cust - beThreshold;
+    const surplus     = typeof beThreshold === 'number' ? cust - beThreshold : 0;
 
     document.getElementById('returnVal').textContent     = fmt(totalReturn);
     document.getElementById('returnFormula').textContent = cust + ' клиентов × €' + clv + ' CLV';
@@ -509,8 +690,7 @@
     netEl.className   = 'metric-value ' + (isPos ? 'positive' : 'negative');
 
     document.getElementById('roiVal').textContent = 'Коэффициент ROI: ' + roi + '×';
-
-    document.getElementById('beVal').textContent = beThreshold;
+    document.getElementById('beVal').textContent  = beThreshold;
 
     const maxCust = parseInt(document.getElementById('custRange').max);
     const pct     = Math.min(cust / maxCust * 100, 100);
@@ -518,37 +698,40 @@
     fill.style.width      = pct + '%';
     fill.style.background = isPos ? '#2d6a4f' : '#9b2226';
 
-    document.getElementById('beMarker').textContent   = beThreshold + ' кл.';
-    document.getElementById('maxMarker').textContent  = maxCust;
+    document.getElementById('beMarker').textContent  = beThreshold + ' кл.';
+    document.getElementById('maxMarker').textContent = maxCust;
 
     const verdict = document.getElementById('verdict');
     if (isPos) {
-      verdict.textContent  = '✓ Цель превышает порог на ' + surplus + ' кл.';
-      verdict.className    = 'threshold-verdict pos';
+      verdict.textContent = '✓ Цель превышает порог на ' + surplus + ' кл.';
+      verdict.className   = 'threshold-verdict pos';
     } else {
-      verdict.textContent  = '✗ До окупаемости не хватает ' + Math.abs(surplus) + ' кл.';
-      verdict.className    = 'threshold-verdict neg';
+      verdict.textContent = '✗ До окупаемости не хватает ' + Math.abs(surplus) + ' кл.';
+      verdict.className   = 'threshold-verdict neg';
     }
 
     const descEl = document.getElementById('thresholdDesc');
     if (isPos) {
       descEl.textContent =
-        'При вашей цели в ' + cust + ' клиентов и CLV €' + clv +
-        ' SEO принесёт €' + Math.round(totalReturn).toLocaleString('ru-RU') +
-        ' дохода против €10 200 инвестиций. Чистая прибыль составит ' +
-        fmt(net) + ' — это ROI ' + roi + '×. ' +
-        'Для окупаемости достаточно всего ' + beThreshold + ' клиентов — ваша цель превышает этот порог на ' + surplus + '.';
+        'При цели ' + cust + ' клиентов и CLV €' + clv +
+        ' SEO принесёт ' + fmt(totalReturn) + ' дохода против €10 200 инвестиций.' +
+        ' Чистая прибыль: ' + fmt(net) + ' (ROI ' + roi + '×).' +
+        ' Для этого сайту нужно ' + fmtNum(impressionsNeeded) + ' показов в Google' +
+        ' и ' + fmtNum(clicksNeeded) + ' кликов за год' +
+        ' при CTR ' + ctr.toFixed(1) + '% и конверсии ' + cr.toFixed(1) + '%.';
     } else {
       descEl.textContent =
-        'При вашей цели в ' + cust + ' клиентов и CLV €' + clv +
-        ' доход составит ' + fmt(totalReturn) + ', что не покрывает инвестиции €10 200. ' +
-        'Для выхода в ноль нужно ещё ' + Math.abs(surplus) + ' клиентов (итого ' + beThreshold + '). ' +
-        'Попробуйте увеличить цель по клиентам или проверьте расчёт CLV — возможно, он занижен.';
+        'При цели ' + cust + ' клиентов и CLV €' + clv +
+        ' доход составит ' + fmt(totalReturn) + ', что не покрывает инвестиции €10 200.' +
+        ' Нужно ещё ' + Math.abs(surplus) + ' клиентов (итого ' + beThreshold + ').' +
+        ' Для этого при CTR ' + ctr.toFixed(1) + '% и CR ' + cr.toFixed(1) + '%' +
+        ' необходимо ' + fmtNum(impressionsNeeded) + ' показов в Google за год.';
     }
   }
 
-  document.getElementById('clvRange').addEventListener('input', update);
-  document.getElementById('custRange').addEventListener('input', update);
+  ['clvRange','custRange','crRange','ctrRange'].forEach(id => {
+    document.getElementById(id).addEventListener('input', update);
+  });
   update();
 </script>
 </body>
